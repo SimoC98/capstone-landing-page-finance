@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finance Closure & Autonomous Finance — Alfasigma × SAP</title>
+  <style>
+    /* ── TOKENS ───────────────────────────────────────────────── */
+    :root {
+      --sap-gold:   #F0AB00;
+      --sap-blue:   #c35500;
+      --sap-dark:   #6d1900;
+      --sap-mid:    #9b2800;
+      --sap-light:  #fce8d8;
+      --sap-accent: #e07030;
+      --white:      #FFFFFF;
+      --gray-50:    #F7F9FC;
+      --gray-100:   #EDF1F7;
+      --gray-300:   #C5CDD8;
+      --gray-600:   #5A6678;
+      --gray-800:   #1E2D3D;
+      --radius-sm:  6px;
+      --radius-md:  12px;
+      --radius-lg:  20px;
+      --shadow-sm:  0 1px 4px rgba(0,0,0,.08);
+      --shadow-md:  0 4px 16px rgba(0,0,0,.12);
+      --shadow-lg:  0 12px 40px rgba(0,0,0,.18);
+    }
+
+    /* ── RESET ────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-800);
+      line-height: 1.6;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: var(--sap-blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── LAYOUT UTILITIES ─────────────────────────────────────── */
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .section { padding: 72px 0; }
+    .section--alt { background: var(--white); }
+
+    /* ── TOPBAR ───────────────────────────────────────────────── */
+    .topbar {
+      background: var(--sap-dark);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-md);
+    }
+    .topbar__brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sap-logo {
+      width: 44px;
+      height: 44px;
+      background: var(--sap-gold);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+      color: var(--sap-dark);
+      letter-spacing: -1px;
+      flex-shrink: 0;
+    }
+    .topbar__divider {
+      width: 1px;
+      height: 32px;
+      background: rgba(255,255,255,.2);
+      flex-shrink: 0;
+    }
+    .topbar__alfasigma-logo {
+      height: 32px;
+      width: auto;
+      object-fit: contain;
+      flex-shrink: 0;
+      filter: brightness(0) invert(1);
+    }
+    .topbar__title {
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .topbar__sub {
+      color: var(--gray-300);
+      font-size: 11px;
+      font-weight: 400;
+    }
+    .topbar__cta {
+      background: var(--sap-gold);
+      color: var(--sap-dark);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 8px 18px;
+      border-radius: var(--radius-sm);
+      white-space: nowrap;
+      transition: opacity .2s;
+    }
+    .topbar__cta:hover { opacity: .85; text-decoration: none; }
+
+    /* ── HERO ─────────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, var(--sap-dark) 0%, var(--sap-mid) 60%, #a84020 100%);
+      color: var(--white);
+      padding: 96px 20px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 80% 30%, rgba(195,85,0,.25) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(240,171,0,.12) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero__inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .hero__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(240,171,0,.15);
+      border: 1px solid rgba(240,171,0,.4);
+      border-radius: 100px;
+      padding: 4px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--sap-gold);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero__eyebrow::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--sap-gold);
+      border-radius: 50%;
+    }
+    .hero__title {
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 8px;
+      letter-spacing: -.02em;
+    }
+    .hero__title span { color: var(--sap-gold); }
+    .hero__subtitle {
+      font-size: clamp(16px, 2.5vw, 22px);
+      font-weight: 400;
+      color: rgba(255,255,255,.75);
+      margin-bottom: 32px;
+    }
+    .hero__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 44px;
+    }
+    .hero__meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: rgba(255,255,255,.8);
+    }
+    .hero__meta-item svg { opacity: .7; flex-shrink: 0; }
+    .hero__stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .stat-card {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      backdrop-filter: blur(8px);
+    }
+    .stat-card__value {
+      font-size: clamp(26px, 4vw, 38px);
+      font-weight: 800;
+      color: var(--sap-gold);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-card__label {
+      font-size: 13px;
+      color: rgba(255,255,255,.7);
+      line-height: 1.4;
+    }
+
+    /* ── SECTION HEADERS ──────────────────────────────────────── */
+    .section-header {
+      margin-bottom: 48px;
+    }
+    .section-header__tag {
+      display: inline-block;
+      background: var(--sap-light);
+      color: var(--sap-blue);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 12px;
+    }
+    .section-header__title {
+      font-size: clamp(22px, 3.5vw, 36px);
+      font-weight: 800;
+      color: var(--sap-dark);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .section-header__lead {
+      font-size: 17px;
+      color: var(--gray-600);
+      max-width: 600px;
+    }
+
+    /* ── AGENDA ───────────────────────────────────────────────── */
+    .agenda-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .agenda-item {
+      background: var(--white);
+      border: 1px solid var(--gray-100);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow .2s, transform .2s;
+    }
+    .agenda-item:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .agenda-item__num {
+      width: 36px; height: 36px;
+      background: var(--sap-dark);
+      color: var(--sap-gold);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .agenda-item__text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--sap-dark);
+      line-height: 1.4;
+    }
+
+    /* ── CONTEXT ──────────────────────────────────────────────── */
+    .context-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .context-card {
+      border-radius: var(--radius-md);
+      padding: 28px;
+      border: 1px solid transparent;
+    }
+    .context-card--challenge {
+      background: #fff5f5;
+      border-color: #fecaca;
+    }
+    .context-card--challenge .context-card__icon { color: #dc2626; }
+    .context-card--opportunity {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+    .context-card--opportunity .context-card__icon { color: #16a34a; }
+    .context-card__icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+    .context-card__title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--gray-800);
+    }
+    .context-card__list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .context-card__list li {
+      font-size: 14px;
+      color: var(--gray-600);
+      padding-left: 16px;
+      position: relative;
+    }
+    .context-card__list li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: inherit;
+      opacity: .6;
+    }
+
+    /* ── SOLUTIONS ────────────────────────────────────────────── */
+    .solution-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .solution-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-100);
+      transition: box-shadow .2s, transform .2s;
+    }
+    .solution-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+    }
+    .solution-card__header {
+      background: var(--sap-dark);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .solution-card__icon {
+      width: 40px; height: 40px;
+      background: rgba(240,171,0,.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .solution-card__name {
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    .solution-card__body {
+      padding: 20px 24px;
+    }
+    .solution-card__desc {
+      font-size: 14px;
+      color: var(--gray-600);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    .solution-card__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tag {
+      background: var(--sap-light);
+      color: var(--sap-blue);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+
+    /* ── FLOW DIAGRAM ─────────────────────────────────────────── */
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      align-items: center;
+      justify-content: center;
+    }
+    .flow__step {
+      background: var(--white);
+      border: 1px solid var(--gray-100);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      text-align: center;
+      min-width: 130px;
+      box-shadow: var(--shadow-sm);
+    }
+    .flow__step-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--sap-blue);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .flow__step-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--sap-dark);
+    }
+    .flow__arrow {
+      color: var(--gray-300);
+      font-size: 20px;
+      padding: 0 6px;
+      flex-shrink: 0;
+    }
+
+    /* ── AUTONOMOUS FINANCE ───────────────────────────────────── */
+    .af-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .af-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 24px 20px;
+      border-left: 4px solid var(--sap-gold);
+      box-shadow: var(--shadow-sm);
+    }
+    .af-card__icon { font-size: 24px; margin-bottom: 10px; }
+    .af-card__title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--sap-dark);
+      margin-bottom: 6px;
+    }
+    .af-card__desc { font-size: 13px; color: var(--gray-600); line-height: 1.5; }
+
+    /* ── KEY TAKEAWAYS ────────────────────────────────────────── */
+    .takeaway-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .takeaway {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 24px 28px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-100);
+      transition: box-shadow .2s;
+    }
+    .takeaway:hover { box-shadow: var(--shadow-md); }
+    .takeaway__num {
+      width: 40px; height: 40px;
+      background: var(--sap-gold);
+      color: var(--sap-dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .takeaway__content {}
+    .takeaway__title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--sap-dark);
+      margin-bottom: 6px;
+    }
+    .takeaway__desc {
+      font-size: 15px;
+      color: var(--gray-600);
+      line-height: 1.6;
+    }
+
+    /* ── METRICS BAND ─────────────────────────────────────────── */
+    .metrics-band {
+      background: linear-gradient(135deg, var(--sap-dark) 0%, var(--sap-mid) 100%);
+      border-radius: var(--radius-lg);
+      padding: 48px 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 32px;
+      text-align: center;
+    }
+    .metric-item__value {
+      font-size: clamp(30px, 5vw, 48px);
+      font-weight: 800;
+      color: var(--sap-gold);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .metric-item__label {
+      font-size: 13px;
+      color: rgba(255,255,255,.7);
+      line-height: 1.4;
+    }
+    .metric-item__divider {
+      width: 32px;
+      height: 2px;
+      background: var(--sap-gold);
+      margin: 10px auto;
+      opacity: .5;
+    }
+
+    /* ── NEXT STEPS ───────────────────────────────────────────── */
+    .steps-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      counter-reset: steps;
+    }
+    .step-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 28px 24px;
+      border: 1px solid var(--gray-100);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .step-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .step-card__phase {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--sap-gold);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .step-card__title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--sap-dark);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .step-card__desc { font-size: 14px; color: var(--gray-600); line-height: 1.5; }
+    .step-card__bar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+    }
+
+    /* ── CONTACT / CTA FOOTER ─────────────────────────────────── */
+    .cta-section {
+      background: linear-gradient(135deg, var(--sap-dark) 0%, #1a5fa8 100%);
+      color: var(--white);
+      text-align: center;
+      padding: 80px 20px;
+    }
+    .cta-section__eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--sap-gold);
+      margin-bottom: 16px;
+    }
+    .cta-section__title {
+      font-size: clamp(24px, 4vw, 40px);
+      font-weight: 800;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .cta-section__subtitle {
+      font-size: 17px;
+      color: rgba(255,255,255,.7);
+      max-width: 520px;
+      margin: 0 auto 40px;
+    }
+    .cta-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      align-items: center;
+    }
+    .btn-primary {
+      background: var(--sap-gold);
+      color: var(--sap-dark);
+      font-weight: 700;
+      font-size: 16px;
+      padding: 14px 32px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: opacity .2s, transform .15s;
+      box-shadow: 0 4px 16px rgba(240,171,0,.4);
+    }
+    .btn-primary:hover {
+      opacity: .9;
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,.1);
+      color: var(--white);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,.25);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background .2s;
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,.18);
+      text-decoration: none;
+    }
+    .contact-info {
+      margin-top: 40px;
+      font-size: 15px;
+      color: rgba(255,255,255,.6);
+    }
+    .contact-info a {
+      color: var(--sap-gold);
+      font-weight: 600;
+    }
+
+    /* ── FOOTER ───────────────────────────────────────────────── */
+    footer {
+      background: var(--gray-800);
+      color: rgba(255,255,255,.5);
+      text-align: center;
+      padding: 24px 20px;
+      font-size: 13px;
+    }
+    footer span { color: rgba(255,255,255,.25); margin: 0 8px; }
+
+    /* ── RESPONSIVE ───────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .topbar { padding: 10px 16px; gap: 10px; }
+      .topbar__title { font-size: 12px; }
+      .topbar__sub { display: none; }
+      .topbar__cta { font-size: 12px; padding: 7px 14px; }
+      .topbar__alfasigma-logo { height: 24px; }
+      .topbar__divider { display: none; }
+      .hero { padding: 64px 16px 56px; }
+      .section { padding: 52px 0; }
+      .metrics-band { padding: 32px 20px; }
+      .takeaway { padding: 20px; gap: 14px; }
+      .takeaway__num { width: 34px; height: 34px; font-size: 14px; }
+      .flow { gap: 0; }
+      .flow__arrow { display: none; }
+      .flow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .flow__step { min-width: unset; }
+    }
+
+    @media (max-width: 480px) {
+      .hero__stats { grid-template-columns: 1fr 1fr; }
+      .stat-card { padding: 16px; }
+      .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+      .cta-buttons { flex-direction: column; }
+    }
+
+    /* ── SCROLL REVEAL (simple) ───────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── TOPBAR ───────────────────────────────────────────── -->
+  <nav class="topbar">
+    <div class="topbar__brand">
+      <div class="sap-logo">SAP</div>
+      <div class="topbar__divider"></div>
+      <img src="alfasgima logo.png" alt="Alfasigma" class="topbar__alfasigma-logo" />
+      <div>
+        <div class="topbar__title">Finance Closure &amp; Autonomous Finance</div>
+        <div class="topbar__sub">Presentation for Alfasigma — Gabriele Ferrari</div>
+      </div>
+    </div>
+    <a href="Capstone (3).pdf" download class="topbar__cta">
+      ↓ Download PDF
+    </a>
+  </nav>
+
+  <!-- ── HERO ─────────────────────────────────────────────── -->
+  <header class="hero">
+    <div class="hero__inner">
+      <div class="hero__eyebrow">SAP Finance Solutions · Alfasigma</div>
+      <h1 class="hero__title">
+        Finance Closure<br>
+        &amp; <span>Autonomous Finance</span>
+      </h1>
+      <p class="hero__subtitle">
+        How SAP transforms Alfasigma's financial close:<br>
+        from 17 ERP systems to a single intelligent platform.
+      </p>
+      <div class="hero__meta">
+        <div class="hero__meta-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Gabriele Ferrari — Finance Solution Advisor, Italy
+        </div>
+        <div class="hero__meta-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          September 2026 — First Demo Meeting
+        </div>
+        <div class="hero__meta-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          30+ jurisdictions · 17 ERP systems
+        </div>
+      </div>
+      <div class="hero__stats">
+        <div class="stat-card">
+          <div class="stat-card__value">50%</div>
+          <div class="stat-card__label">Closing cycle reduction</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__value">€0.5M</div>
+          <div class="stat-card__label">Estimated annual bottom-line benefit</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__value">5 days</div>
+          <div class="stat-card__label">Target closing cycle (from 10)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__value">17.2</div>
+          <div class="stat-card__label">FTEs supported per €Bn revenue</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── AGENDA ────────────────────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-header__tag">Agenda</div>
+        <h2 class="section-header__title">Presentation structure</h2>
+        <p class="section-header__lead">
+          A five-chapter journey: from Alfasigma's current state to the operational roadmap.
+        </p>
+      </div>
+      <div class="agenda-grid">
+        <div class="agenda-item reveal">
+          <div class="agenda-item__num">1</div>
+          <div class="agenda-item__text">Where Alfasigma Is Today — current context and challenges</div>
+        </div>
+        <div class="agenda-item reveal">
+          <div class="agenda-item__num">2</div>
+          <div class="agenda-item__text">Challenges &amp; Opportunities — priorities analysis</div>
+        </div>
+        <div class="agenda-item reveal">
+          <div class="agenda-item__num">3</div>
+          <div class="agenda-item__text">Local &amp; Group Closing — SAP solutions for financial close</div>
+        </div>
+        <div class="agenda-item reveal">
+          <div class="agenda-item__num">4</div>
+          <div class="agenda-item__text">System Demonstration — live demo SAP AFC &amp; Group Reporting</div>
+        </div>
+        <div class="agenda-item reveal">
+          <div class="agenda-item__num">5</div>
+          <div class="agenda-item__text">Autonomous Finance — AI, value realization &amp; Q&amp;A</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTEXT ────────────────────────────────────────────── -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-header__tag">Alfasigma Context</div>
+        <h2 class="section-header__title">The situation today: 30+ countries, 17 ERPs</h2>
+        <p class="section-header__lead">
+          Alfasigma operates across 30+ jurisdictions with fragmented systems. Strategic priorities demand immediate action.
+        </p>
+      </div>
+      <div class="context-cards">
+        <div class="context-card context-card--challenge reveal">
+          <div class="context-card__icon">⚠️</div>
+          <div class="context-card__title">Operational Challenges</div>
+          <ul class="context-card__list">
+            <li>17 heterogeneous ERP systems (SAP and non-SAP)</li>
+            <li>Manual close process relying on spreadsheets</li>
+            <li>Time-consuming intercompany reconciliations</li>
+            <li>Limited and delayed financial visibility</li>
+            <li>Complex integration of Intercept and Nordic Group</li>
+          </ul>
+        </div>
+        <div class="context-card context-card--challenge reveal">
+          <div class="context-card__icon">🎯</div>
+          <div class="context-card__title">Strategic Priorities</div>
+          <ul class="context-card__list">
+            <li>Optimize the financial closing cycle</li>
+            <li>Group consolidation &amp; reporting (IFRS)</li>
+            <li>Fast integration of new acquisitions</li>
+            <li>SOX/ICFR compliance and audit trail</li>
+            <li>RISE with SAP migration already underway</li>
+          </ul>
+        </div>
+        <div class="context-card context-card--opportunity reveal">
+          <div class="context-card__icon">🚀</div>
+          <div class="context-card__title">A Unique Window of Opportunity</div>
+          <ul class="context-card__list">
+            <li>RISE migration creates a once-in-a-generation window</li>
+            <li>Recent acquisitions amplify existing complexity</li>
+            <li>All conditions to act are aligned right now</li>
+            <li>Pfizer benchmark: from 8 to 6 days to close</li>
+            <li>Structural friction, not a resource problem</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROCESS FLOW ───────────────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-header__tag">Financial Process</div>
+        <h2 class="section-header__title">From record to report: an integrated flow</h2>
+      </div>
+      <div class="flow reveal">
+        <div class="flow__step">
+          <div class="flow__step-label">Record</div>
+          <div class="flow__step-title">Create financial record</div>
+        </div>
+        <div class="flow__arrow">→</div>
+        <div class="flow__step">
+          <div class="flow__step-label">Account</div>
+          <div class="flow__step-title">Financial accounting</div>
+        </div>
+        <div class="flow__arrow">→</div>
+        <div class="flow__step">
+          <div class="flow__step-label">Close</div>
+          <div class="flow__step-title">Financial closing</div>
+        </div>
+        <div class="flow__arrow">→</div>
+        <div class="flow__step">
+          <div class="flow__step-label">Report</div>
+          <div class="flow__step-title">Financial reporting</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SOLUTIONS ─────────────────────────────────────────── -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-header__tag">SAP Solutions</div>
+        <h2 class="section-header__title">The proposed solution architecture</h2>
+        <p class="section-header__lead">
+          Three integrated SAP products covering the full cycle from local close to group consolidation.
+        </p>
+      </div>
+      <div class="solution-cards">
+
+        <div class="solution-card reveal">
+          <div class="solution-card__header">
+            <div class="solution-card__icon">🗓️</div>
+            <div class="solution-card__name">SAP Advanced Financial Closing</div>
+          </div>
+          <div class="solution-card__body">
+            <p class="solution-card__desc">
+              Orchestration and automation of the local close. Defines and schedules a global close plan across all entities, automates tasks with dependencies, workflows and notifications, and provides real-time status visibility with full audit trail.
+            </p>
+            <div class="solution-card__tags">
+              <span class="tag">Orchestration</span>
+              <span class="tag">Automation</span>
+              <span class="tag">Compliance</span>
+              <span class="tag">Real-time monitoring</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="solution-card reveal">
+          <div class="solution-card__header">
+            <div class="solution-card__icon">📊</div>
+            <div class="solution-card__name">SAP S/4HANA Group Reporting</div>
+          </div>
+          <div class="solution-card__body">
+            <p class="solution-card__desc">
+              IFRS consolidation layer replacing spreadsheets. Collects data from SAP and non-SAP ERPs, performs consolidation with intercompany eliminations, and generates financial statements, cash flow and P&amp;L with integrated dashboarding.
+            </p>
+            <div class="solution-card__tags">
+              <span class="tag">IFRS consolidation</span>
+              <span class="tag">Multi-ERP</span>
+              <span class="tag">Intercompany</span>
+              <span class="tag">Dashboarding</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="solution-card reveal">
+          <div class="solution-card__header">
+            <div class="solution-card__icon">✅</div>
+            <div class="solution-card__name">SAP BlackLine</div>
+          </div>
+          <div class="solution-card__body">
+            <p class="solution-card__desc">
+              Accounting automation and reconciliations. Handles account reconciliation, automatic substantiation and embedded SOX/ICFR controls. Significantly reduces the manual workload of the finance team.
+            </p>
+            <div class="solution-card__tags">
+              <span class="tag">Reconciliation</span>
+              <span class="tag">SOX / ICFR</span>
+              <span class="tag">Account substantiation</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── METRICS BAND ───────────────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="metrics-band reveal">
+        <div class="metric-item">
+          <div class="metric-item__value">50%</div>
+          <div class="metric-item__divider"></div>
+          <div class="metric-item__label">Closing cycle reduction (from 10 to 5 days)</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-item__value">↑ <span style="font-size:80%">productivity</span></div>
+          <div class="metric-item__divider"></div>
+          <div class="metric-item__label">Productivity increase in GL &amp; closing</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-item__value">€0.5M</div>
+          <div class="metric-item__divider"></div>
+          <div class="metric-item__label">Annual bottom-line benefit (for €1.7B revenue)</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-item__value">↑ <span style="font-size:80%">accuracy</span></div>
+          <div class="metric-item__divider"></div>
+          <div class="metric-item__label">Higher accuracy in financial reporting</div>
+        </div>
+      </div>
+      <p style="text-align:center; font-size:12px; color:var(--gray-600); margin-top:12px;">
+        * Source: SAP Performance Benchmarking. Based on 2025 Financial Statement. Includes all solutions presented.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── AUTONOMOUS FINANCE ─────────────────────────────────── -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-header__tag">The Future</div>
+        <h2 class="section-header__title">SAP Autonomous Finance</h2>
+        <p class="section-header__lead">
+          AI-driven processes to help companies measurably deliver on their key finance objectives. Artificial intelligence as an agentic workforce for the finance team.
+        </p>
+      </div>
+      <div class="af-grid">
+        <div class="af-card reveal">
+          <div class="af-card__icon">🤖</div>
+          <div class="af-card__title">Financial Closing Assistant</div>
+          <div class="af-card__desc">AI agent for faster closes: financial consistency analysis, automated journal entries, accounting accruals.</div>
+        </div>
+        <div class="af-card reveal">
+          <div class="af-card__icon">🔄</div>
+          <div class="af-card__title">Intercompany Matching</div>
+          <div class="af-card__desc">Automated reconciliation of intercompany transactions with intelligent matching to eliminate discrepancies.</div>
+        </div>
+        <div class="af-card reveal">
+          <div class="af-card__icon">💳</div>
+          <div class="af-card__title">Receivables &amp; Payables Clearing</div>
+          <div class="af-card__desc">AI agents for automated clearing of receivables and payables with integrated anomaly detection.</div>
+        </div>
+        <div class="af-card reveal">
+          <div class="af-card__icon">📈</div>
+          <div class="af-card__title">Real-time Financial Analysis</div>
+          <div class="af-card__desc">Real-time analytical business insights: better decisions driven by unified, trustworthy data.</div>
+        </div>
+        <div class="af-card reveal">
+          <div class="af-card__icon">🛡️</div>
+          <div class="af-card__title">Automatic Compliance</div>
+          <div class="af-card__desc">Automatic compliance through audit-ready data. SOX/ICFR and IFRS 18 controls embedded in every process.</div>
+        </div>
+        <div class="af-card reveal">
+          <div class="af-card__icon">⚙️</div>
+          <div class="af-card__title">Asset Accounting &amp; Anomaly Detection</div>
+          <div class="af-card__desc">Automatic detection of accounting anomalies and intelligent management of fixed assets.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── KEY TAKEAWAYS ─────────────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-header__tag">Key Takeaways</div>
+        <h2 class="section-header__title">The key messages of the presentation</h2>
+        <p class="section-header__lead">
+          Six core concepts to evaluate the SAP opportunity for Alfasigma.
+        </p>
+      </div>
+      <div class="takeaway-list">
+
+        <div class="takeaway reveal">
+          <div class="takeaway__num">1</div>
+          <div class="takeaway__content">
+            <div class="takeaway__title">Current complexity is a brake on growth</div>
+            <div class="takeaway__desc">
+              With 17 ERP systems across 30+ jurisdictions, Alfasigma faces structural friction — not a resource problem. Manual processes and spreadsheets expose the company to compliance risk and slow down strategic decisions.
+            </div>
+          </div>
+        </div>
+
+        <div class="takeaway reveal">
+          <div class="takeaway__num">2</div>
+          <div class="takeaway__content">
+            <div class="takeaway__title">The window to act is now, not tomorrow</div>
+            <div class="takeaway__desc">
+              The RISE with SAP migration already underway and the recent acquisitions (Intercept, Nordic Group) create a one-time window. Acting now means capitalising on the ongoing transformation; waiting means adding complexity on top of complexity.
+            </div>
+          </div>
+        </div>
+
+        <div class="takeaway reveal">
+          <div class="takeaway__num">3</div>
+          <div class="takeaway__content">
+            <div class="takeaway__title">SAP offers an end-to-end platform, not isolated products</div>
+            <div class="takeaway__desc">
+              SAP AFC + Group Reporting + BlackLine cover the full cycle from local close to IFRS group consolidation. A single platform eliminates custom integrations, reduces maintenance costs and guarantees data consistency.
+            </div>
+          </div>
+        </div>
+
+        <div class="takeaway reveal">
+          <div class="takeaway__num">4</div>
+          <div class="takeaway__content">
+            <div class="takeaway__title">The benefits are quantified and benchmarked</div>
+            <div class="takeaway__desc">
+              The closing cycle halves (from 10 to 5 days), with an estimated bottom-line benefit of up to €0.5M annually for €1.7B in revenue. The Pfizer case — from 8 to 6 days to close and reduced manual work — proves these are real results, not promises.
+            </div>
+          </div>
+        </div>
+
+        <div class="takeaway reveal">
+          <div class="takeaway__num">5</div>
+          <div class="takeaway__content">
+            <div class="takeaway__title">AI is not the future: it is available today</div>
+            <div class="takeaway__desc">
+              SAP Autonomous Finance brings agentic intelligence to the financial close: automated journal entries, intelligent intercompany reconciliation, real-time anomaly detection. The Financial Closing Assistant is on the roadmap for Q3/2026.
+            </div>
+          </div>
+        </div>
+
+        <div class="takeaway reveal">
+          <div class="takeaway__num">6</div>
+          <div class="takeaway__content">
+            <div class="takeaway__title">Value goes beyond Go-Live: it is a continuous journey</div>
+            <div class="takeaway__desc">
+              The roadmap includes executive workshops, quantified business cases, data assessments and an adoption journey. Value is built after Go-Live, not only during implementation. Alfasigma can start with a phased, measurable approach.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── NEXT STEPS ─────────────────────────────────────────── -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-header__tag">Roadmap</div>
+        <h2 class="section-header__title">Proposed next steps</h2>
+        <p class="section-header__lead">
+          A structured 4-phase journey from exploration to implementation.
+        </p>
+      </div>
+      <div class="steps-list">
+
+        <div class="step-card reveal">
+          <div class="step-card__bar" style="background: var(--sap-gold);"></div>
+          <div class="step-card__phase">Phase 1 · Week 1</div>
+          <div class="step-card__title">Explore<br>BlackLine Solutions</div>
+          <div class="step-card__desc">Executive Workshop to align on Financial Close priorities and identify the pain points to tackle first.</div>
+        </div>
+
+        <div class="step-card reveal">
+          <div class="step-card__bar" style="background: var(--sap-blue);"></div>
+          <div class="step-card__phase">Phase 2 · Week 1–2</div>
+          <div class="step-card__title">Business Case</div>
+          <div class="step-card__desc">Quantify ROI for the top prioritised use cases: substantiation, automation and intercompany governance.</div>
+        </div>
+
+        <div class="step-card reveal">
+          <div class="step-card__bar" style="background: #e07030;"></div>
+          <div class="step-card__phase">Phase 3 · Week 2–4</div>
+          <div class="step-card__title">Data Assessment</div>
+          <div class="step-card__desc">Identify gaps, integration risks and definitive scope. Technical validation of the solution.</div>
+        </div>
+
+        <div class="step-card reveal">
+          <div class="step-card__bar" style="background: #16a34a;"></div>
+          <div class="step-card__phase">Phase 4 · Week 4–6</div>
+          <div class="step-card__title">Journey &amp; Adoption</div>
+          <div class="step-card__desc">Define the adoption plan to maximise value beyond Go-Live. Driving value continuously.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA / CONTACT ──────────────────────────────────────── -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-section__eyebrow">Next step</div>
+      <h2 class="cta-section__title">Rethink the Financial Close with SAP</h2>
+      <p class="cta-section__subtitle">
+        Download the full presentation or contact Gabriele Ferrari to explore the topics that matter most to Alfasigma.
+      </p>
+      <div class="cta-buttons">
+        <a href="Capstone (3).pdf" download class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download the presentation PDF
+        </a>
+        <a href="mailto:gabriele.ferrari@sap.com" class="btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Contact Gabriele Ferrari
+        </a>
+      </div>
+      <div class="contact-info">
+        <a href="mailto:gabriele.ferrari@sap.com">gabriele.ferrari@sap.com</a>
+        <span>·</span>
+        Finance Solution Advisor, Italy
+        <span>·</span>
+        SAP SE
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────── -->
+  <footer>
+    <div class="container">
+      © 2026 SAP SE. Confidential presentation for Alfasigma.
+      <span>·</span>
+      Gabriele Ferrari — Finance Solution Advisor
+      <span>·</span>
+      <a href="Capstone (3).pdf" download style="color:rgba(255,255,255,.4);">Download PDF</a>
+    </div>
+  </footer>
+
+  <!-- ── SCROLL REVEAL SCRIPT ───────────────────────────────── -->
+  <script>
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    );
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
